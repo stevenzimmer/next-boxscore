@@ -7,8 +7,6 @@ import BoxscoreShowcase from "@/components/BoxscoreShowcase";
 import { connectToDatabase } from "@/utils/mongodb";
 import BoxscoreShowcasePitching from "@/components/BoxscoreShowcasePitching";
 
-import SwipeableEdgeDrawer from "@/components/SwipableDrawer";
-
 import { Grid, Paper, Container, Typography, Box } from "@mui/material";
 
 import VerticalTabs from "@/components/VerticalTabs";
