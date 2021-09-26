@@ -1,82 +1,192 @@
-import Head from 'next/head'
+import { useState, useEffect, useContext } from "react";
+import Head from "next/head";
+import { API_URL } from "@/config/index";
+import Boxscore from "@/components/Boxscore";
+import BoxscoreTable from "@/components/BoxscoreTable";
+import BoxscoreShowcase from "@/components/BoxscoreShowcase";
+import { connectToDatabase } from "@/utils/mongodb";
+import BoxscoreShowcasePitching from "@/components/BoxscoreShowcasePitching";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+import SwipeableEdgeDrawer from "@/components/SwipableDrawer";
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
+import { Grid, Paper, Container, Typography, Box } from "@mui/material";
 
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">
-            pages/index.js
-          </code>
-        </p>
+import VerticalTabs from "@/components/VerticalTabs";
 
-        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
+import AuthContext from "@/context/AuthContext";
 
-          <a
-            href="https://nextjs.org/learn"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
+export default function Home({ returnedCollections }) {
+    const {
+        activeBoxscoreID,
+        transitioning,
+        transitioningLeague,
+        setTransitioning,
+        pitchingStats,
+    } = useContext(AuthContext);
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
+    const [boxscoreData, setBoxscoreData] = useState(
+        returnedCollections[activeBoxscoreID].gameInfo
+    );
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+    console.log("boxscore data", boxscoreData);
 
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="h-4 ml-2" />
-        </a>
-      </footer>
-    </div>
-  )
+    useEffect(() => {
+        setBoxscoreData(returnedCollections[activeBoxscoreID].gameInfo);
+        setTransitioning(false);
+        console.log(pitchingStats);
+    }, [activeBoxscoreID]);
+
+    if (!boxscoreData) {
+        return "...Loading";
+    }
+
+    return (
+        <>
+            <Head>
+                <title>
+                    {transitioning
+                        ? `Select a boxscore`
+                        : `${boxscoreData.teams
+                              .map((team, i) => {
+                                  return team.name.abbreviation;
+                              })
+                              .join(" @ ")} | ${boxscoreData.league} boxscore`}
+                </title>
+                <meta
+                    name="viewport"
+                    content="initial-scale=1, width=device-width"
+                />
+                <link
+                    rel="stylesheet"
+                    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+                />
+
+                {/* <meta
+                    name="description"
+                    content={`${boxScores[winningTeamIndex].team_name.id}`}
+                /> */}
+                <link
+                    rel="icon"
+                    href={`/favicon-${boxscoreData.league.toLowerCase()}.png`}
+                />
+            </Head>
+            <Grid container component="section" className="section">
+                <Grid item xs={12} sm={12} md={3} className="relative">
+                    <VerticalTabs {...returnedCollections} />
+                </Grid>
+                <Grid
+                    item
+                    xs={12}
+                    sm={12}
+                    md={9}
+                    component={Paper}
+                    className=""
+                >
+                    <Container maxWidth="xl" className="py-12 h-full  ">
+                        {!transitioning ? (
+                            <>
+                                <BoxscoreShowcase
+                                    {...boxscoreData}
+                                    lastUpdated={
+                                        returnedCollections[activeBoxscoreID]
+                                            .lastUpdated
+                                    }
+                                />
+
+                                <Boxscore {...boxscoreData} />
+                                {returnedCollections[activeBoxscoreID].gameInfo
+                                    .league === "MLB" && (
+                                    <BoxscoreShowcasePitching
+                                        {...boxscoreData}
+                                    />
+                                )}
+
+                                <BoxscoreTable {...boxscoreData} />
+                            </>
+                        ) : (
+                            <Box className="flex h-screen w-full justify-center items-center bg-black bg-opacity-25">
+                                <Typography variant="h3" align="center">
+                                    Select an {transitioningLeague} boxscore
+                                </Typography>
+                            </Box>
+                        )}
+                        {/* <SwipeableEdgeDrawer /> */}
+                    </Container>
+                </Grid>
+            </Grid>
+        </>
+    );
+}
+export async function getServerSideProps(context) {
+    const gameIDs = [
+        "6c974274-4bfc-4af8-a9c4-8b926637ba74",
+        "eed38457-db28-4658-ae4f-4d4d38e9e212",
+    ];
+    const { db } = await connectToDatabase();
+    const boxscoresCollection = db.collection("Collection");
+
+    let gameObjects = {};
+    let itemExists = {};
+    let res = {};
+    let result = {};
+
+    for (let i = 0; i < gameIDs.length; i++) {
+        itemExists = await boxscoresCollection.findOne({
+            gameID: gameIDs[i],
+        });
+
+        let currentTime = Math.round(Date.now() / 1000);
+
+        if (itemExists) {
+            console.log("Item does exist");
+            // Item exists
+            // Check if lastupdate is greater than 15 seconds old
+            if (currentTime - itemExists.lastUpdated > 15) {
+                // Finditem and update
+
+                console.log("Item exists but needs to be updated");
+
+                res = await fetch(`${API_URL}/api/boxscores/${gameIDs[i]}`);
+                const { payload } = await res.json();
+
+                console.log(payload);
+
+                result = await boxscoresCollection.findOneAndUpdate(
+                    {
+                        gameID: gameIDs[i],
+                    },
+                    { $set: payload },
+                    { returnNewDocument: true }
+                );
+
+                gameObjects[gameIDs[i]] = result.value;
+            } else {
+                console.log("Item exists but doesn yet need to be udpated");
+                // Proceed with cached data data
+                gameObjects[gameIDs[i]] = itemExists;
+            }
+        } else {
+            console.log("item does not exist");
+            // Create item
+            // console.log("no item going API");
+            // callBoxscoreAPI();
+            res = await fetch(`${API_URL}/api/boxscores/${gameIDs[i]}`);
+            const { payload } = await res.json();
+
+            result = await boxscoresCollection.insertOne(payload);
+            gameObjects[gameIDs[i]] = result;
+        }
+    }
+
+    const returnedCollections = JSON.parse(JSON.stringify(gameObjects));
+
+    if (!gameObjects) {
+        return {
+            notFound: true,
+        };
+    }
+
+    return {
+        props: { returnedCollections }, // will be passed to the page component as props
+    };
 }
