@@ -6,8 +6,6 @@ This boxscore project was built with Next.js, [Tailwind CSS](https://tailwindcss
 
 This application has been deployed to vercel and can be previewed [`here`](https://next-boxscore.vercel.app/)
 
-[![Preview application](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://next-boxscore.vercel.app/)
-
 ## How to use
 
 Execute `npm run dev` in the terminal while in the root folder to interact with this application locally.
