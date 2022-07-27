@@ -2,13 +2,9 @@ import { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import AuthContext from "@/context/AuthContext";
 export default function BoxscoreShowcasePitching(props) {
-    console.log("pitching", props);
     const { pitchingStats } = useContext(AuthContext);
 
-    console.log(pitchingStats);
-
     function PitchingBox(props) {
-        console.log("box props", props);
         return (
             <Typography
                 variant="h5"

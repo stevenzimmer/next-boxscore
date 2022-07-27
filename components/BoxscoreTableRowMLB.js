@@ -12,34 +12,24 @@ import { useContext } from "react";
 import AuthContext from "@/context/AuthContext";
 
 export default function BoxscoreTableRowMLB(props) {
-    console.log("mlb props", props);
     const { pitchingStats, setPitchingStats } = useContext(AuthContext);
 
     useEffect(() => {
         props.stats.pitching.map((stat) => {
-            // console.log("pitching stat", stat);
-            // setPitchingStats(stat);
             if (stat.win) {
-                console.log("winner", stat.display_name);
                 setPitchingStats((oldStats) => {
-                    console.log("oldstats", oldStats);
                     return { ...oldStats, win: stat.display_name };
                 });
             }
 
             if (stat.loss) {
-                console.log("loss", stat.display_name);
                 setPitchingStats((oldStats) => {
-                    console.log("oldstats", oldStats);
                     return { ...oldStats, loss: stat.display_name };
                 });
-                // setPitchingStats({ loss: stat.display_name });
             }
 
             if (stat.save) {
-                console.log("save", stat.display_name);
                 setPitchingStats((oldStats) => {
-                    console.log("oldstats", oldStats);
                     return { ...oldStats, save: stat.display_name };
                 });
             }
@@ -49,7 +39,7 @@ export default function BoxscoreTableRowMLB(props) {
         <>
             <TableContainer component={Paper} sx={{ marginBottom: "20px" }}>
                 <Table aria-label={`${props.league} hitting boxscore table`}>
-                    <TableHead>
+                    <TableHead className="bg-blue-100">
                         <TableRow>
                             {props.header.hitting.map((headerCol, i) => {
                                 return (
@@ -95,7 +85,7 @@ export default function BoxscoreTableRowMLB(props) {
             </TableContainer>
             <TableContainer component={Paper}>
                 <Table aria-label={`${props.league} pitching boxscore table`}>
-                    <TableHead>
+                    <TableHead className="bg-blue-100">
                         <TableRow>
                             {props.header.pitching.map((headerCol, i) => {
                                 return (
@@ -110,20 +100,6 @@ export default function BoxscoreTableRowMLB(props) {
                     </TableHead>
                     <TableBody>
                         {props.stats.pitching.map((stat) => {
-                            // console.log("pitching stat", stat);
-                            // setPitchingStats(stat);
-                            if (stat.win) {
-                                console.log("winner", stat.display_name);
-                                // setPitchingStats({ winner: stat.display_name });
-                            }
-
-                            if (stat.loss) {
-                                console.log("loss", stat.display_name);
-                            }
-
-                            if (stat.save) {
-                                console.log("save", stat.display_name);
-                            }
                             return (
                                 <TableRow
                                     key={stat.display_name}

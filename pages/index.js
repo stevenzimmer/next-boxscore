@@ -19,19 +19,15 @@ export default function Home({ returnedCollections }) {
         transitioning,
         transitioningLeague,
         setTransitioning,
-        pitchingStats,
     } = useContext(AuthContext);
 
     const [boxscoreData, setBoxscoreData] = useState(
         returnedCollections[activeBoxscoreID].gameInfo
     );
 
-    console.log("boxscore data", boxscoreData);
-
     useEffect(() => {
         setBoxscoreData(returnedCollections[activeBoxscoreID].gameInfo);
         setTransitioning(false);
-        console.log(pitchingStats);
     }, [activeBoxscoreID]);
 
     if (!boxscoreData) {
@@ -59,27 +55,16 @@ export default function Home({ returnedCollections }) {
                     href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
                 />
 
-                {/* <meta
-                    name="description"
-                    content={`${boxScores[winningTeamIndex].team_name.id}`}
-                /> */}
                 <link
                     rel="icon"
                     href={`/favicon-${boxscoreData.league.toLowerCase()}.png`}
                 />
             </Head>
             <Grid container component="section" className="section">
-                <Grid item xs={12} sm={12} md={3} className="relative">
+                <Grid item xs={12} sm={12} md={3}>
                     <VerticalTabs {...returnedCollections} />
                 </Grid>
-                <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    md={9}
-                    component={Paper}
-                    className=""
-                >
+                <Grid item xs={12} sm={12} md={9} component={Paper}>
                     <Container maxWidth="xl" className="py-12 h-full  ">
                         {!transitioning ? (
                             <>
@@ -108,7 +93,6 @@ export default function Home({ returnedCollections }) {
                                 </Typography>
                             </Box>
                         )}
-                        {/* <SwipeableEdgeDrawer /> */}
                     </Container>
                 </Grid>
             </Grid>
@@ -136,18 +120,13 @@ export async function getServerSideProps(context) {
         let currentTime = Math.round(Date.now() / 1000);
 
         if (itemExists) {
-            console.log("Item does exist");
             // Item exists
             // Check if lastupdate is greater than 15 seconds old
             if (currentTime - itemExists.lastUpdated > 15) {
                 // Finditem and update
 
-                console.log("Item exists but needs to be updated");
-
                 res = await fetch(`${API_URL}/api/boxscores/${gameIDs[i]}`);
                 const { payload } = await res.json();
-
-                console.log(payload);
 
                 result = await boxscoresCollection.findOneAndUpdate(
                     {
@@ -159,14 +138,12 @@ export async function getServerSideProps(context) {
 
                 gameObjects[gameIDs[i]] = result.value;
             } else {
-                console.log("Item exists but doesn yet need to be udpated");
                 // Proceed with cached data data
                 gameObjects[gameIDs[i]] = itemExists;
             }
         } else {
-            console.log("item does not exist");
             // Create item
-            // console.log("no item going API");
+
             // callBoxscoreAPI();
             res = await fetch(`${API_URL}/api/boxscores/${gameIDs[i]}`);
             const { payload } = await res.json();
@@ -185,6 +162,6 @@ export async function getServerSideProps(context) {
     }
 
     return {
-        props: { returnedCollections }, // will be passed to the page component as props
+        props: { returnedCollections },
     };
 }

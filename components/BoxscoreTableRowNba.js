@@ -15,7 +15,7 @@ export default function BoxscoreTableRowNba(props) {
             <TableContainer component={Paper}>
                 <Table aria-label={`${props.league} boxscore table`}>
                     <TableHead>
-                        <TableRow>
+                        <TableRow className="bg-blue-100">
                             {props.header.map((headerCol, i) => {
                                 return (
                                     <TableCell key={i}>{headerCol}</TableCell>

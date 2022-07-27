@@ -16,7 +16,7 @@ export default function BoxscoreTable(props) {
                 return (
                     <div
                         key={team.name.abbreviation}
-                        className="w-11/12 lg:w-6/12 px-6 mb-12 lg:mb-0"
+                        className="w-11/12 lg:w-6/12 px-6 mb-12 lg:mb-0 bg-grey-100 py-6"
                     >
                         {props.league === "NBA" && (
                             <BoxscoreTableRowNba
