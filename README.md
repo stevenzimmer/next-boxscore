@@ -4,7 +4,7 @@ This boxscore project was built with Next.js, [Tailwind CSS](https://tailwindcss
 
 ## Preview
 
-This application has been deployed to vercel and can be previewed [`here`](https://next-boxscore.vercel.app/)
+This application has been deployed to vercel and can be previewed [`here`](https://boxscores.webzim.dev)
 
 ## How to use
 
