@@ -52,6 +52,7 @@ export default function VerticalTabs(props) {
     };
     return (
         <Box className={`h-full w-full  text-left`}>
+            
             <Tabs
                 // orientation="vertical"
                 // variant="fullWidth"
@@ -77,7 +78,9 @@ export default function VerticalTabs(props) {
                         />
                     );
                 })}
+                
             </Tabs>
+            
             {previews.map((preview, i) => {
                 league = Object.keys(preview);
                 games = preview[league].games;
@@ -94,6 +97,7 @@ export default function VerticalTabs(props) {
                     </TabPanel>
                 );
             })}
+
         </Box>
     );
 }
